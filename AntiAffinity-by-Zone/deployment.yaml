@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anti-affinity-dummy-clients
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: anti-affinity-dummies
+  template:
+    metadata:
+      labels:
+        app: anti-affinity-dummies
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - anti-affinity-dummies
+            topologyKey: "topology.kubernetes.io/zone"
+      containers:
+      - name: dummy
+        image: nginx:latest
+        ports:
+        - containerPort: 80
