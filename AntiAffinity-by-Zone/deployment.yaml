@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: anti-affinity-dummy-clients
+  name: webapp
 spec:
   replicas: 4
   selector:
     matchLabels:
-      app: anti-affinity-dummies
+      app: webapp
   template:
     metadata:
       labels:
-        app: anti-affinity-dummies
+        app: webapp
     spec:
       affinity:
         podAntiAffinity:
@@ -20,10 +20,17 @@ spec:
               - key: app
                 operator: In
                 values:
-                - anti-affinity-dummies
+                - webapp
             topologyKey: "topology.kubernetes.io/zone"
       containers:
-      - name: dummy
+      - name: webapp
         image: nginx:latest
         ports:
         - containerPort: 80
+        resources:
+          limits:
+            cpu: "0.25"
+            memory: "100Mi"
+          requests:
+            cpu: "0.1"
+            memory: "10Mi"
